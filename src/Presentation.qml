@@ -57,6 +57,11 @@ Item {
     property string fontFamily: "Helvetica"
     property string codeFontFamily: "Courier New"
 
+    // Properties used by Slide only
+    property real bulletSpacing: 1
+    property color bulletColor: textColor
+    property real contentMargin: 0
+
     // Private API
     property bool _faded: false
     property int _userNum;

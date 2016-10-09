@@ -76,7 +76,11 @@ Item {
 
     property real baseFontSize: fontSize * fontScale
     property real titleFontSize: fontSize * 1.2 * fontScale
-    property real bulletSpacing: 1
+
+    property var presentation: parent
+    property real bulletSpacing: parent.bulletSpacing
+    property color bulletColor: parent.bulletColor
+    property real contentMargin: parent.contentMargin
 
     property real contentWidth: width
 
@@ -150,6 +154,8 @@ Item {
         id: contentId
         anchors.fill: parent
 
+        anchors.leftMargin: slide.contentMargin
+
         Repeater {
             model: content.length
 
@@ -160,31 +166,62 @@ Item {
                 property int indentLevel: decideIndentLevel(content[index])
                 property int nextIndentLevel: index < content.length - 1 ? decideIndentLevel(content[index+1]) : 0
                 property real indentFactor: (10 - row.indentLevel * 2) / 10;
+                property real bulletSize: text.font.pixelSize / 1.5
 
                 height: text.height + (nextIndentLevel == 0 ? 1 : 0.3) * slide.baseFontSize * slide.bulletSpacing
                 x: slide.baseFontSize * indentLevel
                 visible: (!slide.parent.allowDelay || !delayPoints) || index <= _pointCounter
 
                 Rectangle {
-                    id: dot
                     anchors.baseline: text.baseline
-                    anchors.baselineOffset: -text.font.pixelSize / 2
-                    width: text.font.pixelSize / 3
-                    height: text.font.pixelSize / 3
-                    color: slide.textColor
-                    radius: width / 2
-                    opacity: text.text.length == 0 ? 0 : 1
+                    anchors.baselineOffset: -row.bulletSize
+                    width: row.bulletSize
+                    height: row.bulletSize
+                    visible: text.text.length != 0 && row.indentLevel % 2 != 0
+
+                    color: slide.bulletColor
+                }
+
+                Canvas {
+                    anchors.baseline: text.baseline
+                    anchors.baselineOffset: -row.bulletSize
+                    width: row.bulletSize
+                    height: row.bulletSize
+                    visible: text.text.length != 0 && row.indentLevel % 2 == 0
+
+                    onPaint: {
+                        var ctx = getContext("2d");
+
+                        ctx.save();
+                        ctx.clearRect(0, 0, width, height);
+
+                        ctx.strokeStyle = slide.bulletColor;
+                        ctx.fillStyle = slide.bulletColor;
+                        ctx.lineWidth = 1;
+                        ctx.lineJoin = "round";
+
+                        ctx.beginPath();
+                        ctx.moveTo(width, height / 2);
+                        ctx.lineTo(0, 0);
+                        ctx.lineTo(0, height);
+                        ctx.closePath();
+
+                        ctx.closePath();
+                        ctx.fill();
+
+                        ctx.restore();
+                    }
                 }
 
                 Item {
                     id: space
-                    width: dot.width * 1.5
+                    width: row.bulletSize / 2
                     height: 1
                 }
 
                 Text {
                     id: text
-                    width: slide.contentWidth - parent.x - dot.width - space.width
+                    width: slide.contentWidth - parent.x - row.bulletSize - space.width
                     font.pixelSize: baseFontSize * row.indentFactor
                     text: content[index]
                     textFormat: slide.textFormat
