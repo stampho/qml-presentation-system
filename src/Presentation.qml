@@ -61,6 +61,7 @@ Item {
     property real bulletSpacing: 1
     property color bulletColor: textColor
     property real contentMargin: 0
+    property int slideTitleAlignment: Text.AlignHCenter
 
     // Private API
     property bool _faded: false

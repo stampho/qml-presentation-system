@@ -81,6 +81,7 @@ Item {
     property real bulletSpacing: parent.bulletSpacing
     property color bulletColor: parent.bulletColor
     property real contentMargin: parent.contentMargin
+    property real titleAlignemnt: parent.slideTitleAlignment
 
     property real contentWidth: width
 
@@ -104,7 +105,11 @@ Item {
         id: titleText
         font.pixelSize: titleFontSize
         text: title;
-        anchors.horizontalCenter: parent.horizontalCenter
+
+        anchors.left: slide.titleAlignemnt == Text.AlignLeft ? parent.left : undefined
+        anchors.horizontalCenter: slide.titleAlignemnt == Text.AlignHCenter ? parent.horizontalCenter : undefined
+        anchors.right: slide.titleAlignemnt == Text.AlignRight ? parent.right : undefined
+
         anchors.bottom: parent.top
         anchors.bottomMargin: parent.fontSize * 1.5
         font.bold: true;
