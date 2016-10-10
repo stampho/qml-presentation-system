@@ -234,6 +234,8 @@ Item {
                     color: slide.textColor
                     horizontalAlignment: Text.AlignLeft
                     font.family: slide.fontFamily
+
+                    onLinkActivated: Qt.openUrlExternally(link)
                 }
             }
         }
